@@ -87,8 +87,11 @@ class CropViewDelegate implements View.OnTouchListener, ViewTreeObserver.OnGloba
 
     private void onTouchMove(MotionEvent event) {
         if (currentEdge == 0) {
-            cropRect.offset((int) event.getX() - lastX,
-                    (int) event.getY() - lastY);
+            if (lastX == 0 || lastY == 0) {
+                lastX = (int) event.getX();
+                lastY = (int) event.getY();
+            }
+            cropRect.offset((int) (event.getX() - lastX), (int) (event.getY() - lastY));
         } else {
             cropRect.left = getLeft(event);
             cropRect.right = getRight(event);
