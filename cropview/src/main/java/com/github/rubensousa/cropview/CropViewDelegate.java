@@ -136,7 +136,7 @@ class CropViewDelegate implements View.OnTouchListener {
     }
 
     private boolean isWithinCircle(int x, int y, int x2, int y2, float radius) {
-        return Math.sqrt(Math.pow(x2 - x, 2) + Math.pow(y2 - y, 2)) <= radius * 4;
+        return Math.sqrt(Math.pow(x2 - x, 2) + Math.pow(y2 - y, 2)) <= radius;
     }
 
     private boolean isWithinBounds(int x, int y) {
