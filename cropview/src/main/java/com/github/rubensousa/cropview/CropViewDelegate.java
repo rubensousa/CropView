@@ -8,6 +8,8 @@ import android.view.ViewTreeObserver;
 
 class CropViewDelegate implements View.OnTouchListener, ViewTreeObserver.OnGlobalLayoutListener {
 
+    private int lastX;
+    private int lastY;
     private int currentEdge;
     private float touchRadius;
     private CropView cropView;
@@ -71,21 +73,31 @@ class CropViewDelegate implements View.OnTouchListener, ViewTreeObserver.OnGloba
             currentEdge = MotionEvent.EDGE_RIGHT;
         } else if (isTouchingEdge(event, MotionEvent.EDGE_BOTTOM)) {
             currentEdge = MotionEvent.EDGE_BOTTOM;
+        } else {
+            currentEdge = 0;
         }
-        return currentEdge != 0;
+        return currentEdge != 0 || isWithinBounds((int) event.getX(), (int) event.getY());
     }
 
     private void onTouchUp(MotionEvent event) {
         currentEdge = 0;
+        lastY = 0;
+        lastX = 0;
     }
 
-    // Default: left - 120 / right - 360 / top - 272 / bottom - 406
     private void onTouchMove(MotionEvent event) {
-        cropRect.left = getLeft(event);
-        cropRect.right = getRight(event);
-        cropRect.top = getTop(event);
-        cropRect.bottom = getBottom(event);
+        if (currentEdge == 0) {
+            cropRect.offset((int) event.getX() - lastX,
+                    (int) event.getY() - lastY);
+        } else {
+            cropRect.left = getLeft(event);
+            cropRect.right = getRight(event);
+            cropRect.top = getTop(event);
+            cropRect.bottom = getBottom(event);
+        }
         cropView.invalidate();
+        lastX = (int) event.getX();
+        lastY = (int) event.getY();
     }
 
     private int getLeft(MotionEvent event) {
@@ -121,18 +133,23 @@ class CropViewDelegate implements View.OnTouchListener, ViewTreeObserver.OnGloba
         int y = (int) event.getY();
         switch (edge) {
             case MotionEvent.EDGE_LEFT:
-                return isWithinBounds(x, y, cropRect.left, cropRect.top, touchRadius);
+                return isWithinCircle(x, y, cropRect.left, cropRect.top, touchRadius);
             case MotionEvent.EDGE_TOP:
-                return isWithinBounds(x, y, cropRect.right, cropRect.top, touchRadius);
+                return isWithinCircle(x, y, cropRect.right, cropRect.top, touchRadius);
             case MotionEvent.EDGE_RIGHT:
-                return isWithinBounds(x, y, cropRect.right, cropRect.bottom, touchRadius);
+                return isWithinCircle(x, y, cropRect.right, cropRect.bottom, touchRadius);
             case MotionEvent.EDGE_BOTTOM:
-                return isWithinBounds(x, y, cropRect.left, cropRect.bottom, touchRadius);
+                return isWithinCircle(x, y, cropRect.left, cropRect.bottom, touchRadius);
         }
         return false;
     }
 
-    private boolean isWithinBounds(int x, int y, int x2, int y2, float radius) {
-        return Math.sqrt(Math.pow(x2 - x, 2) + Math.pow(y2 - y, 2)) <= radius * 2;
+    private boolean isWithinCircle(int x, int y, int x2, int y2, float radius) {
+        return Math.sqrt(Math.pow(x2 - x, 2) + Math.pow(y2 - y, 2)) <= radius * 4;
+    }
+
+    private boolean isWithinBounds(int x, int y) {
+        return x >= cropRect.left && x <= cropRect.right
+                && y <= cropRect.bottom && y >= cropRect.top;
     }
 }

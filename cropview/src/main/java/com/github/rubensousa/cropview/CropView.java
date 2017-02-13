@@ -42,7 +42,7 @@ public class CropView extends FrameLayout {
     private void init(Context context, AttributeSet attrs) {
         TypedValue outValue = new TypedValue();
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CropView, 0, 0);
-        getContext().getTheme().resolveAttribute(R.attr.colorPrimary, outValue, true);
+        getContext().getTheme().resolveAttribute(R.attr.colorAccent, outValue, true);
 
         frameColor = a.getColor(R.styleable.CropView_cropViewFrameColor,
                 ContextCompat.getColor(context, outValue.resourceId));
