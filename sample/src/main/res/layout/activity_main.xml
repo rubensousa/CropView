@@ -15,8 +15,7 @@
     <com.github.rubensousa.cropview.CropView
         android:id="@+id/cropView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#AF000000" />
+        android:layout_height="match_parent" />
 
 
 </RelativeLayout>

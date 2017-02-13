@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="cropview_default_color">#AF000000</color>
+
+    <declare-styleable name="CropView">
+        <attr name="cropViewBackground" format="color" />
+        <attr name="cropViewFrameColor" format="color" />
+    </declare-styleable>
+
+
+</resources>
