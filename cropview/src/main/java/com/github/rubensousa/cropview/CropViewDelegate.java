@@ -16,7 +16,6 @@ class CropViewDelegate implements View.OnTouchListener {
 
     public CropViewDelegate(CropView cropView, int touchRadius) {
         this.cropView = cropView;
-        this.cropView.setOnTouchListener(this);
         this.touchRadius = touchRadius;
         this.cropRect = new Rect();
     }

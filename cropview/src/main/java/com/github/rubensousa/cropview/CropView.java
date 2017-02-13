@@ -12,6 +12,7 @@ import android.graphics.Rect;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
+import android.view.MotionEvent;
 import android.widget.FrameLayout;
 
 
@@ -79,6 +80,11 @@ public class CropView extends FrameLayout {
         framePaint.setColor(frameColor);
         setWillNotDraw(false);
         setBackground(null);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return delegate.onTouch(this, event);
     }
 
     @Override
