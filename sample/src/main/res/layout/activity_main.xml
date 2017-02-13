@@ -17,8 +17,9 @@
         android:id="@+id/cropView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:cropViewDefaultHeight="180dp"
-        app:cropViewDefaultWidth="180dp"
+        app:cropViewFrameColor="@color/colorAccent"
+        app:cropViewDefaultHeight="90dp"
+        app:cropViewDefaultWidth="160dp"
         app:cropViewFrameCircleWidth="8dp" />
 
 

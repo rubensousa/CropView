@@ -50,7 +50,7 @@ public class CropView extends FrameLayout {
         frameColor = a.getColor(R.styleable.CropView_cropViewFrameColor,
                 ContextCompat.getColor(context, outValue.resourceId));
 
-        backgroundColor = a.getColor(R.styleable.CropView_cropViewFrameColor,
+        backgroundColor = a.getColor(R.styleable.CropView_cropViewBackground,
                 ContextCompat.getColor(context, R.color.cropview_default_color));
 
         touchPointWidth = a.getDimensionPixelOffset(R.styleable.CropView_cropViewFrameCircleWidth,
@@ -99,18 +99,6 @@ public class CropView extends FrameLayout {
             cropRect.top = h / 2 - defaultHeight / 2;
             cropRect.bottom = h / 2 + defaultHeight / 2;
             delegate.setCropRect(cropRect);
-            if (isInEditMode()) {
-                Rect rect = new Rect();
-                rect.left = w / 2 - getResources()
-                        .getDimensionPixelOffset(R.dimen.cropview_frame_default_width) / 2;
-                rect.right = w / 2 + getResources()
-                        .getDimensionPixelOffset(R.dimen.cropview_frame_default_width) / 2;
-                rect.top = h / 2 - getResources()
-                        .getDimensionPixelOffset(R.dimen.cropview_frame_default_height) / 2;
-                rect.bottom = h / 2 + getResources()
-                        .getDimensionPixelOffset(R.dimen.cropview_frame_default_height) / 2;
-                delegate.setCropRect(rect);
-            }
         }
     }
 
