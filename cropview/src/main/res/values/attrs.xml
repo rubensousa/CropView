@@ -2,10 +2,19 @@
 <resources>
 
     <color name="cropview_default_color">#AF000000</color>
+    <dimen name="cropview_touch_radius">10dp</dimen>
+    <dimen name="cropview_frame_default_width">160dp</dimen>
+    <dimen name="cropview_frame_default_height">90dp</dimen>
+    <dimen name="cropview_frame_default_border">4dp</dimen>
+    <dimen name="cropview_touchpoint_width">10dp</dimen>
+
 
     <declare-styleable name="CropView">
         <attr name="cropViewBackground" format="color" />
         <attr name="cropViewFrameColor" format="color" />
+        <attr name="cropViewFrameCircleWidth" format="dimension" />
+        <attr name="cropViewDefaultWidth" format="dimension" />
+        <attr name="cropViewDefaultHeight" format="dimension" />
     </declare-styleable>
 
 

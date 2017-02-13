@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-    <dimen name="cropview_frame_default_width">160dp</dimen>
-    <dimen name="cropview_frame_default_height">90dp</dimen>
-    <dimen name="cropview_frame_default_border">4dp</dimen>
-    <dimen name="cropview_touchpoint_width">10dp</dimen>
-
-</resources>

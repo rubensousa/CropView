@@ -4,9 +4,8 @@ package com.github.rubensousa.cropview;
 import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewTreeObserver;
 
-class CropViewDelegate implements View.OnTouchListener, ViewTreeObserver.OnGlobalLayoutListener {
+class CropViewDelegate implements View.OnTouchListener {
 
     private int lastX;
     private int lastY;
@@ -14,20 +13,17 @@ class CropViewDelegate implements View.OnTouchListener, ViewTreeObserver.OnGloba
     private float touchRadius;
     private CropView cropView;
     private Rect cropRect;
-    private int defaultWidth;
-    private int defaultHeight;
-    private boolean firstLayout;
 
-    public CropViewDelegate(CropView cropView, int defaultWidth, int defaultHeight,
-                            int touchRadius) {
+    public CropViewDelegate(CropView cropView, int touchRadius) {
         this.cropView = cropView;
-        this.cropView.getViewTreeObserver().addOnGlobalLayoutListener(this);
         this.cropView.setOnTouchListener(this);
-        this.defaultHeight = defaultHeight;
-        this.defaultWidth = defaultWidth;
         this.touchRadius = touchRadius;
-        cropRect = new Rect();
-        firstLayout = true;
+        this.cropRect = new Rect();
+    }
+
+    public void setCropRect(Rect rect) {
+        cropRect = rect;
+        cropView.invalidate();
     }
 
     public Rect getCropRect() {
@@ -47,21 +43,6 @@ class CropViewDelegate implements View.OnTouchListener, ViewTreeObserver.OnGloba
                 return true;
         }
         return false;
-    }
-
-    @Override
-    public void onGlobalLayout() {
-        if (cropView.getWidth() != 0 && cropView.getHeight() != 0) {
-            if (firstLayout) {
-                cropRect.left = cropView.getWidth() / 2 - defaultWidth / 2;
-                cropRect.right = cropView.getWidth() / 2 + defaultWidth / 2;
-                cropRect.top = cropView.getHeight() / 2 - defaultHeight / 2;
-                cropRect.bottom = cropView.getHeight() / 2 + defaultHeight / 2;
-                firstLayout = false;
-            }
-            cropView.invalidate();
-            cropView.requestLayout();
-        }
     }
 
     private boolean onTouchDown(MotionEvent event) {

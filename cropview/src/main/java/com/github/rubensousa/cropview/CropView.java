@@ -21,8 +21,10 @@ public class CropView extends FrameLayout {
     private Bitmap bitmap;
     private Paint paint;
     private Paint framePaint;
-    private int touchPointWidth;
     private CropViewDelegate delegate;
+    private int defaultWidth;
+    private int defaultHeight;
+    private int touchPointWidth;
     private int backgroundColor;
     private int frameColor;
 
@@ -50,14 +52,25 @@ public class CropView extends FrameLayout {
         backgroundColor = a.getColor(R.styleable.CropView_cropViewFrameColor,
                 ContextCompat.getColor(context, R.color.cropview_default_color));
 
-        touchPointWidth = getResources().getDimensionPixelOffset(R.dimen.cropview_touchpoint_width);
+        touchPointWidth = a.getDimensionPixelOffset(R.styleable.CropView_cropViewFrameCircleWidth,
+                getResources().getDimensionPixelOffset(R.dimen.cropview_touchpoint_width));
+
+        defaultWidth = a.getDimensionPixelOffset(R.styleable.CropView_cropViewDefaultWidth,
+                getResources().getDimensionPixelOffset(R.dimen.cropview_frame_default_width));
+
+        defaultHeight = a.getDimensionPixelOffset(R.styleable.CropView_cropViewDefaultHeight,
+                getResources().getDimensionPixelOffset(R.dimen.cropview_frame_default_height));
+
         a.recycle();
 
-        delegate = new CropViewDelegate(this,
-                getResources().getDimensionPixelOffset(R.dimen.cropview_frame_default_width),
-                getResources().getDimensionPixelOffset(R.dimen.cropview_frame_default_height),
-                getResources().getDimensionPixelOffset(R.dimen.cropview_touchpoint_width) / 2);
+        int touchRadius = isInEditMode() ? 0
+                : getResources().getDimensionPixelOffset(R.dimen.cropview_touch_radius);
 
+        if (touchPointWidth > touchRadius) {
+            touchRadius = touchPointWidth;
+        }
+
+        delegate = new CropViewDelegate(this, touchRadius);
         paint = new Paint();
         paint.setColor(0xFFFFFFFF);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
@@ -71,8 +84,28 @@ public class CropView extends FrameLayout {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        canvas = new Canvas(bitmap);
+        if (w != 0 && h != 0) {
+            bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+            canvas = new Canvas(bitmap);
+            Rect cropRect = delegate.getCropRect();
+            cropRect.left = w / 2 - defaultWidth / 2;
+            cropRect.right = w / 2 + defaultWidth / 2;
+            cropRect.top = h / 2 - defaultHeight / 2;
+            cropRect.bottom = h / 2 + defaultHeight / 2;
+            delegate.setCropRect(cropRect);
+            if (isInEditMode()) {
+                Rect rect = new Rect();
+                rect.left = w / 2 - getResources()
+                        .getDimensionPixelOffset(R.dimen.cropview_frame_default_width) / 2;
+                rect.right = w / 2 + getResources()
+                        .getDimensionPixelOffset(R.dimen.cropview_frame_default_width) / 2;
+                rect.top = h / 2 - getResources()
+                        .getDimensionPixelOffset(R.dimen.cropview_frame_default_height) / 2;
+                rect.bottom = h / 2 + getResources()
+                        .getDimensionPixelOffset(R.dimen.cropview_frame_default_height) / 2;
+                delegate.setCropRect(rect);
+            }
+        }
     }
 
     @Override
@@ -85,6 +118,14 @@ public class CropView extends FrameLayout {
 
         canvas.drawBitmap(bitmap, 0, 0, null);
         drawFrame(canvas);
+    }
+
+    public Rect getCropRect() {
+        return delegate.getCropRect();
+    }
+
+    public void setCropRect(Rect rect) {
+        delegate.setCropRect(rect);
     }
 
     private void drawFrame(Canvas canvas) {
