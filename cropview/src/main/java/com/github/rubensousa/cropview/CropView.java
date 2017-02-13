@@ -55,7 +55,8 @@ public class CropView extends FrameLayout {
 
         delegate = new CropViewDelegate(this,
                 getResources().getDimensionPixelOffset(R.dimen.cropview_frame_default_width),
-                getResources().getDimensionPixelOffset(R.dimen.cropview_frame_default_height));
+                getResources().getDimensionPixelOffset(R.dimen.cropview_frame_default_height),
+                getResources().getDimensionPixelOffset(R.dimen.cropview_touchpoint_width) / 2);
 
         paint = new Paint();
         paint.setColor(0xFFFFFFFF);
