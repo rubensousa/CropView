@@ -91,7 +91,13 @@ class CropViewDelegate implements View.OnTouchListener, ViewTreeObserver.OnGloba
                 lastX = (int) event.getX();
                 lastY = (int) event.getY();
             }
-            cropRect.offset((int) (event.getX() - lastX), (int) (event.getY() - lastY));
+            int dx = (int) (event.getX() - lastX);
+            int dy = (int) (event.getY() - lastY);
+            if (cropRect.left + dx < 0) dx = 0;
+            if (cropRect.top + dy < 0) dy = 0;
+            if (cropRect.right + dx > cropView.getWidth()) dx = 0;
+            if (cropRect.bottom + dy > cropView.getHeight()) dy = 0;
+            cropRect.offset(dx, dy);
         } else {
             cropRect.left = getLeft(event);
             cropRect.right = getRight(event);
@@ -105,28 +111,30 @@ class CropViewDelegate implements View.OnTouchListener, ViewTreeObserver.OnGloba
 
     private int getLeft(MotionEvent event) {
         if (currentEdge == MotionEvent.EDGE_BOTTOM || currentEdge == MotionEvent.EDGE_LEFT) {
-            return (int) event.getX();
+            return (int) event.getX() < 0 ? 0 : (int) event.getX();
         }
         return cropRect.left;
     }
 
     private int getRight(MotionEvent event) {
         if (currentEdge == MotionEvent.EDGE_TOP || currentEdge == MotionEvent.EDGE_RIGHT) {
-            return (int) event.getX();
+            return (int) event.getX() > cropView.getWidth()
+                    ? cropView.getWidth() : (int) event.getX();
         }
         return cropRect.right;
     }
 
     private int getTop(MotionEvent event) {
         if (currentEdge == MotionEvent.EDGE_LEFT || currentEdge == MotionEvent.EDGE_TOP) {
-            return (int) event.getY();
+            return (int) event.getY() < 0 ? 0 : (int) event.getY();
         }
         return cropRect.top;
     }
 
     private int getBottom(MotionEvent event) {
         if (currentEdge == MotionEvent.EDGE_BOTTOM || currentEdge == MotionEvent.EDGE_RIGHT) {
-            return (int) event.getY();
+            return (int) event.getY() > cropView.getHeight()
+                    ? cropView.getHeight() : (int) event.getY();
         }
         return cropRect.bottom;
     }
