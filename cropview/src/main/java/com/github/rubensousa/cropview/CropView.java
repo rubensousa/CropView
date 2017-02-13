@@ -2,7 +2,12 @@ package com.github.rubensousa.cropview;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -11,6 +16,9 @@ import android.widget.FrameLayout;
 
 public class CropView extends FrameLayout {
 
+    private Canvas canvas;
+    private Bitmap bitmap;
+    private Paint paint;
     private CropViewDelegate delegate;
     private int backgroundColor;
     private int frameColor;
@@ -45,15 +53,30 @@ public class CropView extends FrameLayout {
                 getResources().getDimensionPixelOffset(R.dimen.cropview_frame_default_width),
                 getResources().getDimensionPixelOffset(R.dimen.cropview_frame_default_height));
 
+        paint = new Paint();
+        paint.setColor(0xFFFFFFFF);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
         setWillNotDraw(false);
         setBackground(null);
     }
 
     @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        canvas = new Canvas(bitmap);
+    }
+
+    @Override
     protected void onDraw(Canvas canvas) {
-        canvas.drawColor(backgroundColor);
-        drawOverlay(canvas);
-        drawFrame(canvas);
+        bitmap.eraseColor(Color.TRANSPARENT);
+
+        this.canvas.drawColor(backgroundColor);
+
+        // Clear background where the frame is
+        this.canvas.drawRect(delegate.getCropRect(), paint);
+
+        canvas.drawBitmap(bitmap, 0, 0, null);
     }
 
     private void drawOverlay(Canvas canvas) {
