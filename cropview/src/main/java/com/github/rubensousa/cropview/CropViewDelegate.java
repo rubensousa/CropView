@@ -11,12 +11,16 @@ class CropViewDelegate implements View.OnTouchListener {
     private int lastY;
     private int currentEdge;
     private float touchRadius;
+    private int minHeight;
+    private int minWidth;
     private CropView cropView;
     private Rect cropRect;
 
-    public CropViewDelegate(CropView cropView, int touchRadius) {
+    public CropViewDelegate(CropView cropView, int touchRadius, int minWidth, int minHeight) {
         this.cropView = cropView;
         this.touchRadius = touchRadius;
+        this.minWidth = minWidth;
+        this.minHeight = minHeight;
         this.cropRect = new Rect();
     }
 
@@ -90,33 +94,37 @@ class CropViewDelegate implements View.OnTouchListener {
     }
 
     private int getLeft(MotionEvent event) {
-        if (currentEdge == MotionEvent.EDGE_BOTTOM || currentEdge == MotionEvent.EDGE_LEFT) {
-            return (int) event.getX() < 0 ? 0 : (int) event.getX();
+        int left = cropRect.left;
+        if ((currentEdge == MotionEvent.EDGE_BOTTOM || currentEdge == MotionEvent.EDGE_LEFT)) {
+            left = event.getX() < 0 ? 0 : (int) event.getX();
         }
-        return cropRect.left;
+        return cropRect.right - left > minWidth ? left : cropRect.left;
     }
 
     private int getRight(MotionEvent event) {
+        int right = cropRect.right;
         if (currentEdge == MotionEvent.EDGE_TOP || currentEdge == MotionEvent.EDGE_RIGHT) {
-            return (int) event.getX() > cropView.getWidth()
+            right = (int) event.getX() > cropView.getWidth()
                     ? cropView.getWidth() : (int) event.getX();
         }
-        return cropRect.right;
+        return right - cropRect.left > minWidth ? right : cropRect.right;
     }
 
     private int getTop(MotionEvent event) {
+        int top = cropRect.top;
         if (currentEdge == MotionEvent.EDGE_LEFT || currentEdge == MotionEvent.EDGE_TOP) {
-            return (int) event.getY() < 0 ? 0 : (int) event.getY();
+            top = (int) event.getY() < 0 ? 0 : (int) event.getY();
         }
-        return cropRect.top;
+        return cropRect.bottom - top > minHeight ? top : cropRect.top;
     }
 
     private int getBottom(MotionEvent event) {
+        int bottom = cropRect.bottom;
         if (currentEdge == MotionEvent.EDGE_BOTTOM || currentEdge == MotionEvent.EDGE_RIGHT) {
-            return (int) event.getY() > cropView.getHeight()
+            bottom = (int) event.getY() > cropView.getHeight()
                     ? cropView.getHeight() : (int) event.getY();
         }
-        return cropRect.bottom;
+        return bottom - cropRect.top > minHeight ? bottom : cropRect.bottom;
     }
 
     private boolean isTouchingEdge(MotionEvent event, int edge) {

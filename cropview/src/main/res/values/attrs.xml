@@ -15,6 +15,8 @@
         <attr name="cropViewFrameCircleWidth" format="dimension" />
         <attr name="cropViewDefaultWidth" format="dimension" />
         <attr name="cropViewDefaultHeight" format="dimension" />
+        <attr name="cropViewMinWidth" format="dimension" />
+        <attr name="cropViewMinHeight" format="dimension" />
     </declare-styleable>
 
 

@@ -62,8 +62,6 @@ public class CropView extends FrameLayout {
         defaultHeight = a.getDimensionPixelOffset(R.styleable.CropView_cropViewDefaultHeight,
                 getResources().getDimensionPixelOffset(R.dimen.cropview_frame_default_height));
 
-        a.recycle();
-
         int touchRadius = isInEditMode() ? 0
                 : getResources().getDimensionPixelOffset(R.dimen.cropview_touch_radius);
 
@@ -71,7 +69,12 @@ public class CropView extends FrameLayout {
             touchRadius = touchPointWidth;
         }
 
-        delegate = new CropViewDelegate(this, touchRadius);
+        delegate = new CropViewDelegate(this, touchRadius,
+                a.getDimensionPixelOffset(R.styleable.CropView_cropViewMinWidth,
+                        touchPointWidth * 5),
+                a.getDimensionPixelOffset(R.styleable.CropView_cropViewMinHeight,
+                        touchPointWidth * 5));
+
         paint = new Paint();
         paint.setColor(0xFFFFFFFF);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
@@ -80,6 +83,7 @@ public class CropView extends FrameLayout {
         framePaint.setColor(frameColor);
         setWillNotDraw(false);
         setBackground(null);
+        a.recycle();
     }
 
     @Override
