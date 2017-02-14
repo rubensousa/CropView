@@ -5,6 +5,9 @@ import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.util.ArrayList;
+import java.util.List;
+
 class CropViewDelegate implements View.OnTouchListener {
 
     private int lastX;
@@ -14,7 +17,9 @@ class CropViewDelegate implements View.OnTouchListener {
     private int minHeight;
     private int minWidth;
     private CropView cropView;
+    private Rect previousRect;
     private Rect cropRect;
+    private List<CropView.OnCropSectionChangeListener> listeners;
 
     public CropViewDelegate(CropView cropView, int touchRadius, int minWidth, int minHeight) {
         this.cropView = cropView;
@@ -22,6 +27,17 @@ class CropViewDelegate implements View.OnTouchListener {
         this.minWidth = minWidth;
         this.minHeight = minHeight;
         this.cropRect = new Rect();
+        this.listeners = new ArrayList<>();
+    }
+
+    public void addOnCropSectionChangeListener(CropView.OnCropSectionChangeListener listener) {
+        if (!listeners.contains(listener)) {
+            listeners.add(listener);
+        }
+    }
+
+    public void removeOnCropSectionChangeListener(CropView.OnCropSectionChangeListener listener) {
+        listeners.remove(listener);
     }
 
     public void setCropRect(Rect rect) {
@@ -37,6 +53,7 @@ class CropViewDelegate implements View.OnTouchListener {
     public boolean onTouch(View v, MotionEvent event) {
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
+                previousRect = new Rect(cropRect);
                 return onTouchDown(event);
             case MotionEvent.ACTION_UP:
                 onTouchUp(event);
@@ -64,6 +81,11 @@ class CropViewDelegate implements View.OnTouchListener {
     }
 
     private void onTouchUp(MotionEvent event) {
+        if (!previousRect.equals(cropRect)) {
+            for (CropView.OnCropSectionChangeListener listener : listeners) {
+                listener.onCropSectionChanged(cropRect);
+            }
+        }
         currentEdge = 0;
         lastY = 0;
         lastX = 0;

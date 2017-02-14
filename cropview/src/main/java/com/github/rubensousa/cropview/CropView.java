@@ -118,6 +118,14 @@ public class CropView extends FrameLayout {
         drawFrame(canvas);
     }
 
+    public void addOnCropSectionChangeListener(OnCropSectionChangeListener listener) {
+        delegate.addOnCropSectionChangeListener(listener);
+    }
+
+    public void removeOnCropSectionChangeListener(OnCropSectionChangeListener listener) {
+        delegate.removeOnCropSectionChangeListener(listener);
+    }
+
     public Rect getCropRect() {
         return delegate.getCropRect();
     }
@@ -142,5 +150,9 @@ public class CropView extends FrameLayout {
         canvas.drawCircle(rect.right, rect.top, touchPointWidth, framePaint);
         canvas.drawCircle(rect.left, rect.bottom, touchPointWidth, framePaint);
         canvas.drawCircle(rect.right, rect.bottom, touchPointWidth, framePaint);
+    }
+
+    public interface OnCropSectionChangeListener {
+        void onCropSectionChanged(Rect rect);
     }
 }
